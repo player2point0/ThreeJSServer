@@ -36,4 +36,8 @@ todo
 -implemented a way to update the texture from a seperate server
 -working on loading typescript modules for the avatar
 
+--20/03/202
+-setup github
+-decided to change server type to possibly node (needs to support js modules)
+
 
