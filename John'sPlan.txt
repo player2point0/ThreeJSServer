@@ -1,0 +1,7 @@
+projector that displays 3 seperate views ai chatbot avatar, virtual ni, displays graphs (svg)
+
+the 3 front ends are driven by a main server, with one shared state
+the main server can be updated from external servers in the room running seperate programs
+for example the ai chatbot server will process voice in the room and send a responce to the main server to display
+
+

@@ -1,0 +1,39 @@
+todo 
+
+-guide to threejs server and streaming
+-add camera controls
+
+--main server--
+-test send large files between servers, e.g. textures. send through post request and not get
+-test with multiple servers
+
+--threejs frontend--
+-optimise for displaying and changing objects
+-add a way to control the camera
+
+--ai chatbot--
+-research threejs avatars https://threejs.org/examples/webgl_loader_mmd.html
+-solve loading and sending typescript modules
+-implement loading of mmd files
+-implement a working mmd avatar 
+-set up a dummy ai chatbot server to update the state of the main server
+
+--virtual ni--
+-implement streaming of 3d models
+-implement a smart way to load many 3d models, occulsion loading, load distances
+
+--graphs--
+-implement streaming of svgs
+
+--04/03/2020--
+-working vertex streaming
+-working streaming of textures
+-started guide
+-researched server frameworks (node.js)
+
+--11/03/2020
+-implemented a simple to use central state 
+-implemented a way to update the texture from a seperate server
+-working on loading typescript modules for the avatar
+
+
