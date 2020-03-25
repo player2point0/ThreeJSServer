@@ -12,10 +12,7 @@ todo
 -add a way to control the camera
 
 --ai chatbot--
--research threejs avatars https://threejs.org/examples/webgl_loader_mmd.html
--solve loading and sending typescript modules
--implement loading of mmd files
--implement a working mmd avatar 
+-add a way to change animations (check mmd bundle)
 -set up a dummy ai chatbot server to update the state of the main server
 
 --virtual ni--
@@ -36,8 +33,20 @@ todo
 -implemented a way to update the texture from a seperate server
 -working on loading typescript modules for the avatar
 
---20/03/202
+--20/03/2020
 -setup github
 -decided to change server type to possibly node (needs to support js modules)
+
+--21/03/2020
+-created a bundle for mmd-loader
+-successfully connected mmd bundles to server
+-added mmd parser
+-debugging pmd file error
+
+--25/03/2020
+-fixed all dependices
+-loading of mmd with physics helpers
+-positioning of mmd
+-working singular animation
 
 

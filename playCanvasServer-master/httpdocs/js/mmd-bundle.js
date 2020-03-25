@@ -1,10 +1,11 @@
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 /**
  * @author takahiro / https://github.com/takahirox
  *
  * Dependencies
  *  - mmd-parser https://github.com/takahirox/mmd-parser
- *  - TGALoader
- *  - OutlineEffect
+ *  - THREE.TGALoader
+ *  - THREE.OutlineEffect
  *
  * MMDLoader creates Three.js Objects from MMD resources as
  * PMD, PMX, VMD, and VPD files.
@@ -29,52 +30,16 @@
  *  - shadow support.
  */
 
-import {
-	AddOperation,
-	AnimationClip,
-	Bone,
-	BufferGeometry,
-	Color,
-	CustomBlending,
-	DoubleSide,
-	DstAlphaFactor,
-	Euler,
-	FileLoader,
-	Float32BufferAttribute,
-	FrontSide,
-	Interpolant,
-	Loader,
-	LoaderUtils,
-	MeshToonMaterial,
-	MultiplyOperation,
-	NearestFilter,
-	NumberKeyframeTrack,
-	OneMinusSrcAlphaFactor,
-	Quaternion,
-	QuaternionKeyframeTrack,
-	RepeatWrapping,
-	Skeleton,
-	SkinnedMesh,
-	SphericalReflectionMapping,
-	SrcAlphaFactor,
-	TextureLoader,
-	Uint16BufferAttribute,
-	Vector3,
-	VectorKeyframeTrack
-} from "../../../build/three.module.js";
-import { TGALoader } from "../loaders/TGALoader.js";
-import { MMDParser } from "../libs/mmdparser.module.js";
-
-var MMDLoader = ( function () {
+THREE.MMDLoader = ( function () {
 
 	/**
 	 * @param {THREE.LoadingManager} manager
 	 */
 	function MMDLoader( manager ) {
 
-		Loader.call( this, manager );
+		THREE.Loader.call( this, manager );
 
-		this.loader = new FileLoader( this.manager );
+		this.loader = new THREE.FileLoader( this.manager );
 
 		this.parser = null; // lazy generation
 		this.meshBuilder = new MeshBuilder( this.manager );
@@ -82,13 +47,13 @@ var MMDLoader = ( function () {
 
 	}
 
-	MMDLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
+	MMDLoader.prototype = Object.assign( Object.create( THREE.Loader.prototype ), {
 
 		constructor: MMDLoader,
 
 		/**
 		 * @param {string} animationPath
-		 * @return {MMDLoader}
+		 * @return {THREE.MMDLoader}
 		 */
 		setAnimationPath: function ( animationPath ) {
 
@@ -100,7 +65,7 @@ var MMDLoader = ( function () {
 		// Load MMD assets as Three.js Object
 
 		/**
-		 * Loads Model file (.pmd or .pmx) as a SkinnedMesh.
+		 * Loads Model file (.pmd or .pmx) as a THREE.SkinnedMesh.
 		 *
 		 * @param {string} url - url to Model(.pmd or .pmx) file
 		 * @param {function} onLoad
@@ -125,7 +90,7 @@ var MMDLoader = ( function () {
 
 			} else {
 
-				resourcePath = LoaderUtils.extractUrlBase( url );
+				resourcePath = THREE.LoaderUtils.extractUrlBase( url );
 
 			}
 
@@ -149,11 +114,11 @@ var MMDLoader = ( function () {
 		},
 
 		/**
-		 * Loads Motion file(s) (.vmd) as a AnimationClip.
+		 * Loads Motion file(s) (.vmd) as a THREE.AnimationClip.
 		 * If two or more files are specified, they'll be merged.
 		 *
 		 * @param {string|Array<string>} url - url(s) to animation(.vmd) file(s)
-		 * @param {SkinnedMesh|THREE.Camera} object - tracks will be fitting to this object
+		 * @param {THREE.SkinnedMesh|THREE.Camera} object - tracks will be fitting to this object
 		 * @param {function} onLoad
 		 * @param {function} onProgress
 		 * @param {function} onError
@@ -174,8 +139,8 @@ var MMDLoader = ( function () {
 
 		/**
 		 * Loads mode file and motion file(s) as an object containing
-		 * a SkinnedMesh and a AnimationClip.
-		 * Tracks of AnimationClip are fitting to the model.
+		 * a THREE.SkinnedMesh and a THREE.AnimationClip.
+		 * Tracks of THREE.AnimationClip are fitting to the model.
 		 *
 		 * @param {string} modelUrl - url to Model(.pmd or .pmx) file
 		 * @param {string|Array{string}} vmdUrl - url(s) to animation(.vmd) file
@@ -398,7 +363,7 @@ var MMDLoader = ( function () {
 		 * @param {string} resourcePath
 		 * @param {function} onProgress
 		 * @param {function} onError
-		 * @return {SkinnedMesh}
+		 * @return {THREE.SkinnedMesh}
 		 */
 		build: function ( data, resourcePath, onProgress, onError ) {
 
@@ -408,9 +373,9 @@ var MMDLoader = ( function () {
 				.setResourcePath( resourcePath )
 				.build( data, geometry, onProgress, onError );
 
-			var mesh = new SkinnedMesh( geometry, material );
+			var mesh = new THREE.SkinnedMesh( geometry, material );
 
-			var skeleton = new Skeleton( initBones( mesh ) );
+			var skeleton = new THREE.Skeleton( initBones( mesh ) );
 			mesh.bind( skeleton );
 
 			// console.log( mesh ); // for console debug
@@ -440,7 +405,7 @@ var MMDLoader = ( function () {
 
 				// create new 'Bone' object
 
-				bone = new Bone();
+				bone = new THREE.Bone();
 				bones.push( bone );
 
 				// apply values
@@ -497,7 +462,7 @@ var MMDLoader = ( function () {
 
 		/**
 		 * @param {Object} data - parsed PMD/PMX data
-		 * @return {BufferGeometry}
+		 * @return {THREE.BufferGeometry}
 		 */
 		build: function ( data ) {
 
@@ -658,7 +623,7 @@ var MMDLoader = ( function () {
 
 						if ( data.bones[ link.index ].name.indexOf( 'ひざ' ) >= 0 ) {
 
-							link.limitation = new Vector3( 1.0, 0.0, 0.0 );
+							link.limitation = new THREE.Vector3( 1.0, 0.0, 0.0 );
 
 						}
 
@@ -695,7 +660,7 @@ var MMDLoader = ( function () {
 						if ( ik.links[ j ].angleLimitation === 1 ) {
 
 							// Revert if rotationMin/Max doesn't work well
-							// link.limitation = new Vector3( 1.0, 0.0, 0.0 );
+							// link.limitation = new THREE.Vector3( 1.0, 0.0, 0.0 );
 
 							var rotationMin = ik.links[ j ].lowerLimitationAngle;
 							var rotationMax = ik.links[ j ].upperLimitationAngle;
@@ -710,8 +675,8 @@ var MMDLoader = ( function () {
 							rotationMin[ 0 ] = tmp1;
 							rotationMin[ 1 ] = tmp2;
 
-							link.rotationMin = new Vector3().fromArray( rotationMin );
-							link.rotationMax = new Vector3().fromArray( rotationMax );
+							link.rotationMin = new THREE.Vector3().fromArray( rotationMin );
+							link.rotationMax = new THREE.Vector3().fromArray( rotationMax );
 
 						}
 
@@ -791,7 +756,7 @@ var MMDLoader = ( function () {
 				var morph = data.morphs[ i ];
 				var params = { name: morph.name };
 
-				var attribute = new Float32BufferAttribute( data.metadata.vertexCount * 3, 3 );
+				var attribute = new THREE.Float32BufferAttribute( data.metadata.vertexCount * 3, 3 );
 				attribute.name = morph.name;
 
 				for ( var j = 0; j < data.metadata.vertexCount * 3; j ++ ) {
@@ -939,13 +904,13 @@ var MMDLoader = ( function () {
 
 			// build BufferGeometry.
 
-			var geometry = new BufferGeometry();
+			var geometry = new THREE.BufferGeometry();
 
-			geometry.setAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
-			geometry.setAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
-			geometry.setAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
-			geometry.setAttribute( 'skinIndex', new Uint16BufferAttribute( skinIndices, 4 ) );
-			geometry.setAttribute( 'skinWeight', new Float32BufferAttribute( skinWeights, 4 ) );
+			geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, 3 ) );
+			geometry.setAttribute( 'normal', new THREE.Float32BufferAttribute( normals, 3 ) );
+			geometry.setAttribute( 'uv', new THREE.Float32BufferAttribute( uvs, 2 ) );
+			geometry.setAttribute( 'skinIndex', new THREE.Uint16BufferAttribute( skinIndices, 4 ) );
+			geometry.setAttribute( 'skinWeight', new THREE.Float32BufferAttribute( skinWeights, 4 ) );
 			geometry.setIndex( indices );
 
 			for ( var i = 0, il = groups.length; i < il; i ++ ) {
@@ -986,7 +951,7 @@ var MMDLoader = ( function () {
 
 		this.manager = manager;
 
-		this.textureLoader = new TextureLoader( this.manager );
+		this.textureLoader = new THREE.TextureLoader( this.manager );
 		this.tgaLoader = null; // lazy generation
 
 	}
@@ -1023,10 +988,10 @@ var MMDLoader = ( function () {
 
 		/**
 		 * @param {Object} data - parsed PMD/PMX data
-		 * @param {BufferGeometry} geometry - some properties are dependend on geometry
+		 * @param {THREE.BufferGeometry} geometry - some properties are dependend on geometry
 		 * @param {function} onProgress
 		 * @param {function} onError
-		 * @return {Array<MeshToonMaterial>}
+		 * @return {Array<THREE.MeshToonMaterial>}
 		 */
 		build: function ( data, geometry /*, onProgress, onError */ ) {
 
@@ -1058,10 +1023,10 @@ var MMDLoader = ( function () {
 				 * MeshToonMaterial doesn't have ambient. Set it to emissive instead.
 				 * It'll be too bright if material has map texture so using coef 0.2.
 				 */
-				params.color = new Color().fromArray( material.diffuse );
+				params.color = new THREE.Color().fromArray( material.diffuse );
 				params.opacity = material.diffuse[ 3 ];
-				params.specular = new Color().fromArray( material.specular );
-				params.emissive = new Color().fromArray( material.ambient );
+				params.specular = new THREE.Color().fromArray( material.specular );
+				params.emissive = new THREE.Color().fromArray( material.ambient );
 				params.shininess = Math.max( material.shininess, 1e-4 ); // to prevent pow( 0.0, 0.0 )
 				params.transparent = params.opacity !== 1.0;
 
@@ -1073,21 +1038,21 @@ var MMDLoader = ( function () {
 
 				// blend
 
-				params.blending = CustomBlending;
-				params.blendSrc = SrcAlphaFactor;
-				params.blendDst = OneMinusSrcAlphaFactor;
-				params.blendSrcAlpha = SrcAlphaFactor;
-				params.blendDstAlpha = DstAlphaFactor;
+				params.blending = THREE.CustomBlending;
+				params.blendSrc = THREE.SrcAlphaFactor;
+				params.blendDst = THREE.OneMinusSrcAlphaFactor;
+				params.blendSrcAlpha = THREE.SrcAlphaFactor;
+				params.blendDstAlpha = THREE.DstAlphaFactor;
 
 				// side
 
 				if ( data.metadata.format === 'pmx' && ( material.flag & 0x1 ) === 1 ) {
 
-					params.side = DoubleSide;
+					params.side = THREE.DoubleSide;
 
 				} else {
 
-					params.side = params.opacity === 1.0 ? FrontSide : DoubleSide;
+					params.side = params.opacity === 1.0 ? THREE.FrontSide : THREE.DoubleSide;
 
 				}
 
@@ -1116,8 +1081,8 @@ var MMDLoader = ( function () {
 							);
 
 							params.combine = extension === '.sph'
-								? MultiplyOperation
-								: AddOperation;
+								? THREE.MultiplyOperation
+								: THREE.AddOperation;
 
 						}
 
@@ -1167,8 +1132,8 @@ var MMDLoader = ( function () {
 						);
 
 						params.combine = material.envFlag === 1
-							? MultiplyOperation
-							: AddOperation;
+							? THREE.MultiplyOperation
+							: THREE.AddOperation;
 
 					}
 
@@ -1219,7 +1184,7 @@ var MMDLoader = ( function () {
 
 				}
 
-				materials.push( new MeshToonMaterial( params ) );
+				materials.push( new THREE.MeshToonMaterial( params ) );
 
 			}
 
@@ -1284,13 +1249,13 @@ var MMDLoader = ( function () {
 
 			if ( this.tgaLoader === null ) {
 
-				if ( TGALoader === undefined ) {
+				if ( THREE.TGALoader === undefined ) {
 
-					throw new Error( 'THREE.MMDLoader: Import TGALoader' );
+					throw new Error( 'THREE.MMDLoader: Import THREE.TGALoader' );
 
 				}
 
-				this.tgaLoader = new TGALoader( this.manager );
+				this.tgaLoader = new THREE.TGALoader( this.manager );
 
 			}
 
@@ -1360,14 +1325,14 @@ var MMDLoader = ( function () {
 
 					t.image = scope._getRotatedImage( t.image );
 
-					t.magFilter = NearestFilter;
-					t.minFilter = NearestFilter;
+					t.magFilter = THREE.NearestFilter;
+					t.minFilter = THREE.NearestFilter;
 
 				}
 
 				t.flipY = false;
-				t.wrapS = RepeatWrapping;
-				t.wrapT = RepeatWrapping;
+				t.wrapS = THREE.RepeatWrapping;
+				t.wrapT = THREE.RepeatWrapping;
 
 				for ( var i = 0; i < texture.readyCallbacks.length; i ++ ) {
 
@@ -1381,7 +1346,7 @@ var MMDLoader = ( function () {
 
 			if ( params.sphericalReflectionMapping === true ) {
 
-				texture.mapping = SphericalReflectionMapping;
+				texture.mapping = THREE.SphericalReflectionMapping;
 
 			}
 
@@ -1472,8 +1437,8 @@ var MMDLoader = ( function () {
 				/*
 				 * This method expects
 				 *   texture.flipY = false
-				 *   texture.wrapS = RepeatWrapping
-				 *   texture.wrapT = RepeatWrapping
+				 *   texture.wrapS = THREE.RepeatWrapping
+				 *   texture.wrapT = THREE.RepeatWrapping
 				 * TODO: more precise
 				 */
 				function getAlphaByUv( image, uv ) {
@@ -1526,8 +1491,8 @@ var MMDLoader = ( function () {
 
 		/**
 		 * @param {Object} vmd - parsed VMD data
-		 * @param {SkinnedMesh} mesh - tracks will be fitting to mesh
-		 * @return {AnimationClip}
+		 * @param {THREE.SkinnedMesh} mesh - tracks will be fitting to mesh
+		 * @return {THREE.AnimationClip}
 		 */
 		build: function ( vmd, mesh ) {
 
@@ -1542,14 +1507,14 @@ var MMDLoader = ( function () {
 
 			}
 
-			return new AnimationClip( '', - 1, tracks );
+			return new THREE.AnimationClip( '', - 1, tracks );
 
 		},
 
 		/**
 		 * @param {Object} vmd - parsed VMD data
-		 * @param {SkinnedMesh} mesh - tracks will be fitting to mesh
-		 * @return {AnimationClip}
+		 * @param {THREE.SkinnedMesh} mesh - tracks will be fitting to mesh
+		 * @return {THREE.AnimationClip}
 		 */
 		buildSkeletalAnimation: function ( vmd, mesh ) {
 
@@ -1623,19 +1588,19 @@ var MMDLoader = ( function () {
 
 				var targetName = '.bones[' + key + ']';
 
-				tracks.push( this._createTrack( targetName + '.position', VectorKeyframeTrack, times, positions, pInterpolations ) );
-				tracks.push( this._createTrack( targetName + '.quaternion', QuaternionKeyframeTrack, times, rotations, rInterpolations ) );
+				tracks.push( this._createTrack( targetName + '.position', THREE.VectorKeyframeTrack, times, positions, pInterpolations ) );
+				tracks.push( this._createTrack( targetName + '.quaternion', THREE.QuaternionKeyframeTrack, times, rotations, rInterpolations ) );
 
 			}
 
-			return new AnimationClip( '', - 1, tracks );
+			return new THREE.AnimationClip( '', - 1, tracks );
 
 		},
 
 		/**
 		 * @param {Object} vmd - parsed VMD data
-		 * @param {SkinnedMesh} mesh - tracks will be fitting to mesh
-		 * @return {AnimationClip}
+		 * @param {THREE.SkinnedMesh} mesh - tracks will be fitting to mesh
+		 * @return {THREE.AnimationClip}
 		 */
 		buildMorphAnimation: function ( vmd, mesh ) {
 
@@ -1676,17 +1641,17 @@ var MMDLoader = ( function () {
 
 				}
 
-				tracks.push( new NumberKeyframeTrack( '.morphTargetInfluences[' + morphTargetDictionary[ key ] + ']', times, values ) );
+				tracks.push( new THREE.NumberKeyframeTrack( '.morphTargetInfluences[' + morphTargetDictionary[ key ] + ']', times, values ) );
 
 			}
 
-			return new AnimationClip( '', - 1, tracks );
+			return new THREE.AnimationClip( '', - 1, tracks );
 
 		},
 
 		/**
 		 * @param {Object} vmd - parsed VMD data
-		 * @return {AnimationClip}
+		 * @return {THREE.AnimationClip}
 		 */
 		buildCameraAnimation: function ( vmd ) {
 
@@ -1737,10 +1702,10 @@ var MMDLoader = ( function () {
 			var pInterpolations = [];
 			var fInterpolations = [];
 
-			var quaternion = new Quaternion();
-			var euler = new Euler();
-			var position = new Vector3();
-			var center = new Vector3();
+			var quaternion = new THREE.Quaternion();
+			var euler = new THREE.Euler();
+			var position = new THREE.Vector3();
+			var center = new THREE.Vector3();
 
 			for ( var i = 0, il = cameras.length; i < il; i ++ ) {
 
@@ -1792,13 +1757,13 @@ var MMDLoader = ( function () {
 			var tracks = [];
 
 			// I expect an object whose name 'target' exists under THREE.Camera
-			tracks.push( this._createTrack( 'target.position', VectorKeyframeTrack, times, centers, cInterpolations ) );
+			tracks.push( this._createTrack( 'target.position', THREE.VectorKeyframeTrack, times, centers, cInterpolations ) );
 
-			tracks.push( this._createTrack( '.quaternion', QuaternionKeyframeTrack, times, quaternions, qInterpolations ) );
-			tracks.push( this._createTrack( '.position', VectorKeyframeTrack, times, positions, pInterpolations ) );
-			tracks.push( this._createTrack( '.fov', NumberKeyframeTrack, times, fovs, fInterpolations ) );
+			tracks.push( this._createTrack( '.quaternion', THREE.QuaternionKeyframeTrack, times, quaternions, qInterpolations ) );
+			tracks.push( this._createTrack( '.position', THREE.VectorKeyframeTrack, times, positions, pInterpolations ) );
+			tracks.push( this._createTrack( '.fov', THREE.NumberKeyframeTrack, times, fovs, fInterpolations ) );
 
-			return new AnimationClip( '', - 1, tracks );
+			return new THREE.AnimationClip( '', - 1, tracks );
 
 		},
 
@@ -1880,13 +1845,13 @@ var MMDLoader = ( function () {
 
 	function CubicBezierInterpolation( parameterPositions, sampleValues, sampleSize, resultBuffer, params ) {
 
-		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
+		THREE.Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
 
 		this.interpolationParams = params;
 
 	}
 
-	CubicBezierInterpolation.prototype = Object.assign( Object.create( Interpolant.prototype ), {
+	CubicBezierInterpolation.prototype = Object.assign( Object.create( THREE.Interpolant.prototype ), {
 
 		constructor: CubicBezierInterpolation,
 
@@ -1914,7 +1879,7 @@ var MMDLoader = ( function () {
 
 				var ratio = this._calculate( x1, x2, y1, y2, weight1 );
 
-				Quaternion.slerpFlat( result, 0, values, offset0, values, offset1, ratio );
+				THREE.Quaternion.slerpFlat( result, 0, values, offset0, values, offset1, ratio );
 
 			} else if ( stride === 3 ) { // Vector3
 
@@ -2023,4 +1988,4 @@ var MMDLoader = ( function () {
 
 } )();
 
-export { MMDLoader };
+},{}]},{},[1]);

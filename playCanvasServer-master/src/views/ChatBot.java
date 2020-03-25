@@ -25,6 +25,19 @@ public class ChatBot extends DynamicWebPage {
         {
             String stringToSendToWebBrowser = "<html>\n" + 
         			"<head>"+
+	        			"<script src=\"./js/three.js\"></script>\n" + 
+	        			"<script src=\"./js/mmdparser.js\"></script>\r\n" + 
+	        			
+	        			
+	        			"<script src=\"./js/CCDIKSolver.js\"></script>\r\n" + 
+	        			"<script src=\"./js/ammo.js\"></script>\r\n" + 
+	        			
+	        			"<script src=\"./js/MMDPhysics.js\"></script>\r\n" + 
+	        			"<script src=\"./js/MMDAnimationHelper.js\"></script>\r\n" + 
+	        			
+	        			"<script src=\"./js/mmd-bundle.js\"></script>\n" + 
+	        			
+	        			"<script src=\"./js/JavaEntity.js\"></script>\n" + 
 	        			"<link href=\"css/stats.css\" rel=\"stylesheet\" type=\"text/css\">" +
             		"</head>"+
             		"<body>\n"+
@@ -43,6 +56,12 @@ public class ChatBot extends DynamicWebPage {
 
             JSONObject entity1 = makeEntity("assest", "texture", 0, 0, 0);
             entity1.put("mmd", true);
+            entity1.put("xScale", 0.5);
+            entity1.put("yScale", 0.5);
+            entity1.put("zScale", 0.5);
+            entity1.put("y", -10);
+            entity1.put("z", -15);
+            
             
             entities.put(0, entity1);       
             
@@ -94,7 +113,6 @@ public class ChatBot extends DynamicWebPage {
     public JSONObject makeEntity(String  model, String name, double x, double y, double z)
     {
     	 JSONObject entity = new JSONObject();
-         JSONObject vertexData = new JSONObject(); 
          
          //entity.put("model", model);
          entity.put("name", name);
@@ -105,7 +123,6 @@ public class ChatBot extends DynamicWebPage {
          entity.put("boundingBoxX", 0.5);
          entity.put("boundingBoxY", 0.5);
          entity.put("boundingBoxZ", 0.5);
-         entity.put("vertexData", vertexData);
          
          return entity;
     }
