@@ -54,11 +54,11 @@ public class ChatBot extends DynamicWebPage {
         	JSONObject responseData = new JSONObject();
             JSONArray entities = new JSONArray();
 
-            JSONObject entity1 = makeEntity("assest", "texture", 0, 0, 0);
-            entity1.put("mmd", true);
-            entity1.put("xScale", 0.5);
-            entity1.put("yScale", 0.5);
-            entity1.put("zScale", 0.5);
+            JSONObject entity1 = new JSONObject();
+            entity1.put("name", "avatat");
+            entity1.put("mmdName", "miku");
+            entity1.put("vmdName", "wavefile_v2");
+            
             entity1.put("y", -10);
             entity1.put("z", -15);
             
@@ -78,7 +78,10 @@ public class ChatBot extends DynamicWebPage {
             JSONObject responseData = new JSONObject();
             JSONArray entities = new JSONArray();     
             
-            JSONObject entity1 = makeEntity("assest", "texture", 0, 0, 0);
+            JSONObject entity1 = new JSONObject();
+            entity1.put("name", "avatat");
+            entity1.put("mmdName", "chen");
+            //entity1.put("vmdName", "1");
             
             entities.put(0, entity1);       
             
@@ -114,7 +117,6 @@ public class ChatBot extends DynamicWebPage {
     {
     	 JSONObject entity = new JSONObject();
          
-         //entity.put("model", model);
          entity.put("name", name);
          entity.put("x", x);
          entity.put("y", y);

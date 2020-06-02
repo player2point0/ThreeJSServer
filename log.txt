@@ -48,5 +48,18 @@ todo
 -loading of mmd with physics helpers
 -positioning of mmd
 -working singular animation
+-downloaded more models and animations
+
+--01/04/2020
+-loading of different models and animations on start
+-work on changing the mmd during runtime
+
+--03/04/2020
+-researching threejs animation system
+
+--0/04/2020
+
+
+
 
 

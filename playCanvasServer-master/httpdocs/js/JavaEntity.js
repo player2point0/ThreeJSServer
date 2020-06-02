@@ -17,6 +17,7 @@ class JavaEntity {
 		this.zScale = 1;
 		this.gameObject;
 		this.name = entityData.name;
+		this.loadedMmd = false;
 
 		//the texture that is displayed on the material
 		//supports loading images from file
@@ -26,7 +27,7 @@ class JavaEntity {
 			this.texture = new THREE.TextureLoader().load(entityData.texture);
 		}
 
-		if (entityData.mmd) {
+		if (entityData.mmdName && entityData.vmdName) {
 			function onProgress(xhr) {
 				if (xhr.lengthComputable) {
 					var percentComplete = (xhr.loaded / xhr.total) * 100;
@@ -34,8 +35,15 @@ class JavaEntity {
 				}
 			}
 
-			var modelFile = "./js/mmd/miku/miku_v2.pmd";
-			var vmdFiles = ["./js/mmd/vmds/wavefile_v2.vmd"];
+			this.currentMmdName = entityData.mmdName;
+			this.currentVmdName = entityData.vmdName;
+
+			var modelFile = "./js/mmd/" + entityData.mmdName + "/model.pmd";
+			var vmdFiles = [
+				"./js/mmd/vmds/" + entityData.vmdName + ".vmd",
+				"./js/mmd/vmds/5.vmd",
+				"./js/mmd/vmds/6.vmd",
+			];
 
 			this.helper = new THREE.MMDAnimationHelper({
 				afterglow: 2.0,
@@ -43,6 +51,9 @@ class JavaEntity {
 
 			var loader = new THREE.MMDLoader();
 			let scope = this;
+
+			//todo change to use a custom animation system to allow multiple animations
+			// don't use the animation builder in mmd-bundle
 
 			loader.loadWithAnimation(
 				modelFile,
@@ -56,19 +67,20 @@ class JavaEntity {
 							physics: true,
 						});
 
-						let ikHelper = scope.helper.objects
+						scope.ikHelper = scope.helper.objects
 							.get(scope.gameObject)
 							.ikSolver.createHelper();
-						ikHelper.visible = false;
-						sceneEntity.add(ikHelper);
+						scope.ikHelper.visible = false;
+						sceneEntity.add(scope.ikHelper);
 
-						let physicsHelper = scope.helper.objects
+						scope.physicsHelper = scope.helper.objects
 							.get(scope.gameObject)
 							.physics.createHelper();
-						physicsHelper.visible = false;
-						sceneEntity.add(physicsHelper);
+						scope.physicsHelper.visible = false;
+						sceneEntity.add(scope.physicsHelper);
 
 						scope.positionAndAddToScene(entityData, sceneEntity);
+						scope.loadedMmd = true;
 					});
 				},
 				onProgress,
@@ -156,8 +168,58 @@ class JavaEntity {
 		if (entityData.texture) {
 			this.changeTexture(entityData.texture);
 		}
+		/*
+		if (
+			entityData.mmdName &&
+			entityData.mmdName != this.currentMmdName &&
+			this.loadedMmd
+		) {
+			this.changeMmd(entityData.mmdName);
+		}
+*/
+		if (entityData.vmdName && entityData.vmdName != this.currentVmdName) {
+			this.changeVmd(entityData.vmdName);
+		}
 	}
+	changeMmd(mmdName) {
+		this.currentMmdName = mmdName;
+		this.loadedMmd = false;
+
+		var modelFile = "./js/mmd/" + mmdName + "/model.pmd";
+
+		//replace the mmd model
+
+		var loader = new THREE.MMDLoader();
+		let scope = this;
+
+		this.gameObject.geometry.dispose();
+
+		loader.load(
+			// path to PMD/PMX file
+			modelFile,
+			// called when the resource is loaded
+			function(mesh) {
+				console.log(mesh);
+				//scope.gameObject.geometry.updateFromObject(mesh);
+
+				scope.loadedMmd = true;
+				scope.gameObject = mesh;
+			},
+			// called when loading is in progresses
+			function(xhr) {
+				console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+			},
+			// called when loading has errors
+			function(error) {
+				console.log("An error happened");
+			}
+		);
+	}
+	changeVmd(vmdName) {}
 	changeMesh(vertexData) {
+		//test this
+		this.geometry.dispose();
+
 		this.geometry.setIndex(vertexData.indices);
 		this.geometry.setAttribute(
 			"uv",
